@@ -1,0 +1,62 @@
+export const carData = [
+    {
+        id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
+        title: 'Porsche 911 GT3',
+        description: 'A high-performance machine designed for the track, offering an exhilarating driving experience and precision engineering.',
+        price: 185000,
+    },
+    {
+        id: 'b2c3d4e5-f6a7-8901-2345-67890abcdef0',
+        title: 'Ferrari F8 Tributo',
+        description: 'An Italian masterpiece with a twin-turbo V8 engine, delivering breathtaking speed and stunning aesthetics.',
+        price: 320000,
+    },
+    {
+        id: 'c3d4e5f6-a7b8-9012-3456-7890abcdef01',
+        title: 'Lamborghini Huracán EVO',
+        description: 'Experience the raw power of a naturally aspirated V10 engine, combined with cutting-edge aerodynamics and a bold design.',
+        price: 261000,
+    },
+    {
+        id: 'd4e5f6a7-b8c9-0123-4567-890abcdef012',
+        title: 'McLaren 720S',
+        description: 'A lightweight supercar with a carbon fiber chassis and a potent V8 engine, providing incredible agility and performance.',
+        price: 315000,
+    },
+    {
+        id: 'e5f6a7b8-c9d0-1234-5678-90abcdef0123',
+        title: 'Audi R8 V10 Performance',
+        description: 'A supercar for everyday use, featuring a screaming V10 engine, all-wheel drive, and a luxurious, comfortable cabin.',
+        price: 208000,
+    },
+    {
+        id: 'f6a7b8c9-d0e1-2345-6789-0abcdef01234',
+        title: 'Porsche Taycan Turbo S',
+        description: 'The pinnacle of electric performance, offering blistering acceleration and innovative technology in a sleek four-door package.',
+        price: 194900,
+    },
+    {
+        id: 'a7b8c9d0-e1f2-3456-7890-bcdef0123456',
+        title: 'Ferrari SF90 Stradale',
+        description: 'A revolutionary plug-in hybrid hypercar with 1000 horsepower, combining electric motors and a V8 for unmatched performance.',
+        price: 625000,
+    },
+    {
+        id: 'b8c9d0e1-f2a3-4567-8901-cdef01234567',
+        title: 'Aston Martin DBS Superleggera',
+        description: 'A stunning British grand tourer with a twin-turbo V12, blending elegant design with immense power and comfort.',
+        price: 330000,
+    },
+    {
+        id: 'c9d0e1f2-a3b4-5678-9012-def012345678',
+        title: 'Bugatti Chiron',
+        description: 'An engineering marvel, this hypercar is built for ultimate speed with a quad-turbo W16 engine and unparalleled luxury.',
+        price: 3300000,
+    },
+    {
+        id: 'd0e1f2a3-b4c5-6789-0123-ef0123456789',
+        title: 'Lamborghini Aventador SVJ',
+        description: 'A track-focused beast with a monstrous V12 engine, active aerodynamics, and a design that commands attention everywhere.',
+        price: 573000,
+    }
+];
