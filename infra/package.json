@@ -26,9 +26,13 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.0.0",
     "@aws-sdk/client-s3": "^3.916.0",
+    "@aws-sdk/client-sns": "^3.919.0",
+    "@aws-sdk/client-sqs": "^3.919.0",
     "@aws-sdk/lib-dynamodb": "^3.0.0",
     "@aws-sdk/s3-request-presigner": "^3.916.0",
+    "@types/aws-lambda": "8.10.157",
     "aws-cdk-lib": "2.214.0",
+    "aws-lambda": "^1.0.7",
     "constructs": "^10.0.0",
     "csv-parser": "^3.2.0",
     "dotenv": "^17.2.3",

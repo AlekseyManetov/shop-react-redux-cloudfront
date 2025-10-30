@@ -22,5 +22,5 @@ new DeployWebAppStack(app, 'DeployWebAppStack', {
     /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
 
-new ProductServiceStack(app, 'ProductServiceStack', {});
-new ImportServiceStack(app, 'ImportServiceStack', {});
+const productServiceStack = new ProductServiceStack(app, 'ProductServiceStack', {});
+new ImportServiceStack(app, 'ImportServiceStack', productServiceStack.catalogItemsQueue);

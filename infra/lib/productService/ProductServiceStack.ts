@@ -5,8 +5,14 @@ import * as path from 'path';
 import { Construct } from 'constructs';
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as sqs from "aws-cdk-lib/aws-sqs";
+import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
+import * as sns from "aws-cdk-lib/aws-sns";
+import * as subscriptions from "aws-cdk-lib/aws-sns-subscriptions";
 
 export class ProductServiceStack extends cdk.Stack {
+    public readonly catalogItemsQueue: sqs.Queue;
+
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
@@ -112,5 +118,54 @@ export class ProductServiceStack extends cdk.Stack {
 
         const productIdResource = productResource.addResource('{productId}');
         productIdResource.addMethod('GET', getProductByIdLambdaIntegration);
+
+
+        // SQS
+        this.catalogItemsQueue = new sqs.Queue(this, "catalogItemsQueue");
+
+        // SNS Topic for product creation notifications
+        const createProductTopic = new sns.Topic(this, "createProductTopic", {
+            displayName: "Product Creation Notifications",
+            topicName: "createProductTopic"
+        });
+
+        // Email subscription
+        createProductTopic.addSubscription(
+            new subscriptions.EmailSubscription("aliaksei_manetau@epam.com")
+        );
+
+        const catalogBatchProcessLambda = new NodejsFunction(this, "catalogBatchProcess", {
+            runtime: lambda.Runtime.NODEJS_20_X,
+            memorySize: 1024,
+            timeout: cdk.Duration.seconds(5),
+            entry: path.join(__dirname, 'catalogBatchProcess.ts'),
+            handler: 'catalogBatchProcess',
+            environment: {
+                PRODUCTS_TABLE: productsTable.tableName,
+                STOCK_TABLE: stockTable.tableName,
+                CREATE_PRODUCT_TOPIC_ARN: createProductTopic.topicArn,
+            },
+        });
+
+        catalogBatchProcessLambda.addEventSource(new SqsEventSource(this.catalogItemsQueue, { batchSize: 5 }));
+
+        // Grant permissions to DynamoDB tables
+        productsTable.grantWriteData(catalogBatchProcessLambda);
+        stockTable.grantWriteData(catalogBatchProcessLambda);
+
+        // Grant permissions to SNS topic
+        createProductTopic.grantPublish(catalogBatchProcessLambda);
+
+        // Output the queue URL for reference
+        new cdk.CfnOutput(this, 'CatalogItemsQueueUrl', {
+            value: this.catalogItemsQueue.queueUrl,
+            description: 'URL of the catalog items SQS queue',
+        });
+
+        // Output the SNS topic ARN for reference
+        new cdk.CfnOutput(this, 'CreateProductTopicArn', {
+            value: createProductTopic.topicArn,
+            description: 'ARN of the SNS topic for product creation notifications',
+        });
     }
 }
