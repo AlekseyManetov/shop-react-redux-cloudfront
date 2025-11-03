@@ -6,9 +6,10 @@ import { Construct } from 'constructs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class ImportServiceStack extends cdk.Stack {
-    constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+    constructor(scope: Construct, id: string, catalogItemsQueue: sqs.Queue, props?: cdk.StackProps) {
         super(scope, id, props);
 
         const bucket = new s3.Bucket(this, 'ImportBucket', {
@@ -43,9 +44,13 @@ export class ImportServiceStack extends cdk.Stack {
             timeout: cdk.Duration.seconds(10),
             entry: path.join(__dirname, 'importFileParser.ts'),
             handler: 'importFileParser',
+            environment: {
+                CATALOG_ITEMS_QUEUE_URL: catalogItemsQueue.queueUrl,
+            },
         });
 
         bucket.grantRead(importFileParserLambda);
+        catalogItemsQueue.grantSendMessages(importFileParserLambda);
         bucket.addEventNotification(
             s3.EventType.OBJECT_CREATED,
             new s3n.LambdaDestination(importFileParserLambda),
