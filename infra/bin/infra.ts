@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
 import * as cdk from 'aws-cdk-lib';
 import { DeployWebAppStack } from '../lib/deploy-web-app-stack';
 import {ProductServiceStack} from "../lib/productService/ProductServiceStack";
 import {ImportServiceStack} from "../lib/importService/ImportServiceStack";
+
+// Load .env file from infra root into process.env
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const app = new cdk.App();
 new DeployWebAppStack(app, 'DeployWebAppStack', {
@@ -23,4 +28,4 @@ new DeployWebAppStack(app, 'DeployWebAppStack', {
 });
 
 const productServiceStack = new ProductServiceStack(app, 'ProductServiceStack', {});
-new ImportServiceStack(app, 'ImportServiceStack', productServiceStack.catalogItemsQueue);
+const importServiceStack = new ImportServiceStack(app, 'ImportServiceStack', productServiceStack.catalogItemsQueue);

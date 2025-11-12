@@ -81,8 +81,33 @@ export class ImportServiceStack extends cdk.Stack {
             proxy: false,
         });
 
+        // Create the basicAuthorizer Lambda using handler from authorization service
+        // TokenAuthorizer automatically grants permissions when Lambda is in the same stack
+        // Environment variables are loaded from .env file via dotenv.config() in infra.ts
+        const basicAuthorizerLambda = new NodejsFunction(this, 'basic-authorizer-lambda', {
+            runtime: lambda.Runtime.NODEJS_20_X,
+            memorySize: 128,
+            timeout: cdk.Duration.seconds(5),
+            entry: path.join(__dirname, '../authorizationService/basicAuthorizer.ts'),
+            handler: 'basicAuthorizer',
+            environment: {
+                AlekseyManetov: process.env.AlekseyManetov || '',
+            },
+        });
+
+        const authorizer = new apigateway.TokenAuthorizer(
+            this,
+            'ImportTokenAuthorizer',
+            {
+                handler: basicAuthorizerLambda,
+                identitySource: apigateway.IdentitySource.header('Authorization'),
+            }
+        );
+
         const importResource = api.root.addResource("import");
         importResource.addMethod('GET', importLambdaIntegration, {
+            authorizer: authorizer,
+            authorizationType: apigateway.AuthorizationType.CUSTOM,
             methodResponses: [{
                 statusCode: '200',
                 responseParameters: {
